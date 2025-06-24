@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
@@ -51,5 +52,32 @@ class LoginTest extends TestCase
         $response = $this->post('api/users/login', $data);
         $response->assertStatus(200);
         $response->assertJson(['msg' => 'User return successfully']);
+    }
+
+    /** @test */
+    public function it_returns_the_authenticated_user()
+    {
+        $passwordHash = password_hash('1234',PASSWORD_DEFAULT);
+
+       $user = User::create([
+        'name' => 'Carlos Souza',
+        'user_type'=>'User',
+        'email' => 'Carlos@email.com',
+        'phone' => '96 0000000',
+        'password' => $passwordHash
+    ]);
+
+    $token = JWTAuth::fromUser($user);
+
+    $response = $this->withHeaders([
+        'Authorization' => "Bearer $token",
+    ])->getJson('/api/users/me');
+
+    $response->assertStatus(200);
+    $response->assertJsonFragment([
+        'email' => $user->email,
+        'name' => $user->name,
+    ]);
+
     }
 }

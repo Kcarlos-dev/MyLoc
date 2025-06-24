@@ -71,4 +71,24 @@ class LoginController extends Controller
 
 
     }
+    public function AuthUser(Request $request){
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if (! $user) {
+                return response()->json([
+                    'error' => 'User not found'
+                ], 404);
+            }
+
+            return response()->json([
+                'user' => $user
+            ], 200);
+
+        } catch (JWTException $e) {
+            return response()->json([
+                'error' => 'Invalid or expired token'
+            ], 401);
+        }
+    }
 }
