@@ -22,3 +22,5 @@ use App\Http\Controllers\LoginController;
 Route::post('/users/register', [LoginController::class,'RegisterUser']);
 Route::post('/users/login', [LoginController::class,'LoginUser']);
 Route::get('/users/me', [LoginController::class,'AuthUser']);
+Route::post('/users/exit', [LoginController::class,'Userlogout']);
+
