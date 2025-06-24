@@ -22,7 +22,7 @@ class LoginTest extends TestCase
             'password'=>'1234',
         ];
         $response = $this->post('api/users/register',$data);
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $response->assertJson(['msg'=>'User registered successfully']);
 
         $this->assertDatabaseHas('users', [
@@ -30,5 +30,16 @@ class LoginTest extends TestCase
             'email' => 'Carlos@email.com',
         ]);
 
+    }
+    /** @test */
+    public function it_should_return_the_user_login(){
+       $this->withoutExceptionHandling();
+        $data = [
+            'email' => 'Carlos@email.com',
+            'password' => '1234'
+        ];
+        $response = $this->post('api/users/login', $data);
+        $response->assertStatus(200);
+        $response->assertJson(['msg' => 'User return successfully']);
     }
 }

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 class LoginController extends Controller
 {
     public function RegisterUser(Request $request)
@@ -27,13 +29,10 @@ class LoginController extends Controller
             $user->password = $passwordHash;
             $user->save();
 
-         /*Log::info([
-                "name" => $name,
-                "email" => $email,
-                "password"=> $passwordHash
-            ]);*/
+            $token = JWTAuth::fromUser($user);
 
-            return response()->json(['msg' => 'User registered successfully'], 200);
+
+            return response()->json(['msg' => 'User registered successfully','token' => $token], 201);
 
         } catch (\Exception $e) {
             Log::error('Erro no metodo RegisterUser:', [
