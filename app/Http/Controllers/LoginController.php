@@ -10,17 +10,20 @@ class LoginController extends Controller
     public function RegisterUser(Request $request)
     {
         try {
-            ['name' => $name, 'email' => $email, 'password' => $password] = $request->only(['name', 'email', 'password']);
+            ['name' => $name, 'email' => $email,'phone'=> $phone, 'password' => $password] = $request->only(['name', 'email','phone', 'password']);
             if(strlen(trim($name)) <= 0
             || strlen(trim($email)) <= 0
             || strlen(trim($password)) <= 0
+            || strlen(trim($phone)) <= 0
             ){
                 return response()->json(['msg' => 'Need of data'], 400);
             };
             $passwordHash = password_hash($password,PASSWORD_DEFAULT);
             $user = new User();
             $user->name = $name;
+            $user->user_type = 'User';
             $user->email = $email;
+            $user->phone = $phone;
             $user->password = $passwordHash;
             $user->save();
 

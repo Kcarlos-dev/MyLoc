@@ -18,6 +18,7 @@ class LoginTest extends TestCase
         $data = [
             'name'=>'Carlos Souza',
             'email'=> 'Carlos@email.com',
+            'phone'=>'96 0000000',
             'password'=>'1234',
         ];
         $response = $this->post('api/users/register',$data);
