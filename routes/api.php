@@ -20,3 +20,4 @@ use App\Http\Controllers\LoginController;
     return $request->user();
 });*/
 Route::post('/users/register', [LoginController::class,'RegisterUser']);
+Route::post('/users/login', [LoginController::class,'LoginUser']);

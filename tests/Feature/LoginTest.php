@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -34,6 +35,15 @@ class LoginTest extends TestCase
     /** @test */
     public function it_should_return_the_user_login(){
        $this->withoutExceptionHandling();
+       $passwordHash = password_hash('1234',PASSWORD_DEFAULT);
+
+       User::create([
+        'name' => 'Carlos Souza',
+        'user_type'=>'User',
+        'email' => 'Carlos@email.com',
+        'phone' => '96 0000000',
+        'password' => $passwordHash
+    ]);
         $data = [
             'email' => 'Carlos@email.com',
             'password' => '1234'

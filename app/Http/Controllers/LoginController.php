@@ -44,4 +44,31 @@ class LoginController extends Controller
         }
 
 }
+    public function LoginUser(Request $request){
+        try {
+            ['email' => $email, 'password' => $password] = $request->only('email', 'password');
+            if(strlen(trim($email)) <= 0
+            || strlen(trim($password)) <= 0){
+                return response()->json(['error' => 'Need email or password'], 401);
+            }
+
+            if(! $token = JWTAuth::attempt(['email' => $email, 'password' => $password])){
+                Log::info($token);
+                return response()->json(['error' => 'Invalid credentials'], 401);
+            }
+
+            return response()->json(['msg' => 'User return successfully','token' => $token],200);
+
+        } catch (\Exception $e) {
+            Log::error('Erro no metodo LoginUser:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+
+
+    }
 }
