@@ -8,6 +8,7 @@ use Tests\TestCase;
 
 class LoginTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * A basic feature test example.
      */
@@ -19,10 +20,14 @@ class LoginTest extends TestCase
             'email'=> 'Carlos@email.com',
             'password'=>'1234',
         ];
-        $response = $this->post('/users/register',$data);
+        $response = $this->post('api/users/register',$data);
         $response->assertStatus(200);
         $response->assertJson(['msg'=>'User registered successfully']);
 
+        $this->assertDatabaseHas('users', [
+            'name' => 'Carlos Souza',
+            'email' => 'Carlos@email.com',
+        ]);
 
     }
 }
