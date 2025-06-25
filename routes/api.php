@@ -31,5 +31,6 @@ Route::middleware([JwtMiddleware::class])->group(function () {
 });
 
 Route::middleware(['jwt.auth', 'user.type:admin,stockist'])->group(function () {
+    Route::get('/items', [ItemsController::class, 'GetItems']);
     Route::post('/items/register', [ItemsController::class, 'RegisterItems']);
 });

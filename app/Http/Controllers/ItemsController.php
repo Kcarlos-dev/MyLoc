@@ -60,4 +60,27 @@ class ItemsController extends Controller
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+    public function GetItems(Request $request)
+    {
+        try {
+            $name = $request->query("name");
+            if (strlen(trim($name)) <= 0) {
+                $data = Menu_Item::get();
+            } else {
+                $data = Menu_Item::where('name', $name)->get();
+            }
+            if (!$data) {
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
+            return response()->json(["msg" => "Items found successfully", "data" => $data], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro no metodo GetItems:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
 }

@@ -28,6 +28,9 @@ class LoginController extends Controller
             $user->email = $email;
             $user->phone = $phone;
             $user->password = $passwordHash;
+            if (strlen($request->user_type) > 0) {
+                $user->user_type = $request->user_type;
+            }
             $user->save();
 
             $token = JWTAuth::fromUser($user);
@@ -41,6 +44,7 @@ class LoginController extends Controller
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
             ]);
+            return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
     public function LoginUser(Request $request)
