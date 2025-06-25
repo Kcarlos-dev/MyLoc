@@ -15,6 +15,7 @@ class Menu_Item extends Model
         "description",
         "price",
         "category",
+        "stock_quantity",
         "is_available"
     ];
 }

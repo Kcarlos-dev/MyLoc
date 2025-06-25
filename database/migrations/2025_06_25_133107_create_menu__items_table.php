@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('menu__items', function (Blueprint $table) {
             $table->id("item_id");
-            $table->string("name");
+            $table->string("name")->unique();
             $table->string("description");
             $table->string("price");
             $table->string("category");
+            $table->string("stock_quantity");
             $table->boolean("is_available");
             $table->timestamps();
         });

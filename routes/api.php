@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ItemsController;
 use App\Http\Middleware\JwtMiddleware;
 
 
@@ -28,3 +29,5 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     Route::get('/users/me', [LoginController::class, 'AuthUser']);
     Route::post('/users/exit', [LoginController::class, 'Userlogout']);
 });
+
+Route::post('/items/register', [ItemsController::class, 'RegisterItems']);
