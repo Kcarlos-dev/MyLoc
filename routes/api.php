@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Middleware\JwtMiddleware;
 
 
 /*
@@ -19,8 +20,11 @@ use App\Http\Controllers\LoginController;
 /*Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });*/
-Route::post('/users/register', [LoginController::class,'RegisterUser']);
-Route::post('/users/login', [LoginController::class,'LoginUser']);
-Route::get('/users/me', [LoginController::class,'AuthUser']);
-Route::post('/users/exit', [LoginController::class,'Userlogout']);
 
+Route::post('/users/register', [LoginController::class, 'RegisterUser']);
+Route::post('/users/login', [LoginController::class, 'LoginUser']);
+
+Route::middleware([JwtMiddleware::class])->group(function () {
+    Route::get('/users/me', [LoginController::class, 'AuthUser']);
+    Route::post('/users/exit', [LoginController::class, 'Userlogout']);
+});

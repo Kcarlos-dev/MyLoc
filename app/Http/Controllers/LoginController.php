@@ -56,7 +56,6 @@ class LoginController extends Controller
             }
 
             if (! $token = JWTAuth::attempt(['email' => $email, 'password' => $password])) {
-                Log::info($token);
                 return response()->json(['error' => 'Invalid credentials'], 401);
             }
 
