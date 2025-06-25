@@ -25,7 +25,6 @@ class LoginController extends Controller
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
             $user = new User();
             $user->name = $name;
-            $user->user_type = 'User';
             $user->email = $email;
             $user->phone = $phone;
             $user->password = $passwordHash;

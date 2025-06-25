@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ItemsController;
 use App\Http\Middleware\JwtMiddleware;
-
+use App\Http\Middleware\CheckUserType;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,4 +30,6 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     Route::post('/users/exit', [LoginController::class, 'Userlogout']);
 });
 
-Route::post('/items/register', [ItemsController::class, 'RegisterItems']);
+Route::middleware(['jwt.auth', 'user.type:admin,stockist'])->group(function () {
+    Route::post('/items/register', [ItemsController::class, 'RegisterItems']);
+});
