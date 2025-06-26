@@ -40,6 +40,10 @@ class ItemsController extends Controller
                 return response()->json(['msg' => 'Need of data'], 401);
             }
 
+            if(Menu_Item::where('name',$name)->first()){
+                return response()->json(["Erro"=>"Item $name already in the database"],400);
+            }
+
 
             Menu_Item::create([
                 "name" => $name,

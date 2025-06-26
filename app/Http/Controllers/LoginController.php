@@ -22,6 +22,13 @@ class LoginController extends Controller
             ) {
                 return response()->json(['msg' => 'Need of data'], 400);
             };
+            if (User::where('email', $email)->first()) {
+                return response()->json(['Erro' => "$email Already in the database"], 400);
+            }
+            if (User::where('phone', $phone)->first()) {
+                return response()->json(['Erro' => "$phone Already in the database"], 400);
+            }
+
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
             $user = new User();
             $user->name = $name;
