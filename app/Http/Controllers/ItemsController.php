@@ -116,4 +116,28 @@ class ItemsController extends Controller
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+    public function DeleteItems($name)
+    {
+        try {
+            if (
+                strlen(trim($name)) <= 0
+            ) {
+                return response()->json(['msg' => 'Name not found'], 400);
+            }
+            $item = Menu_Item::where('name', $name)->delete();
+
+            if (!$item) {
+                return response()->json(['msg' => 'Item not found'], 404);
+            }
+            return response()->json(['msg' => 'Item deleted from database'], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro no metodo DeleteItems:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
 }
