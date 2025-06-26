@@ -79,4 +79,37 @@ class MenuItemsTest extends TestCase
         $response->assertStatus(200);
         $response->assertJson(["msg" => "Items found successfully"]);
     }
+    /** @test */
+    public function he_must_make_the_item_update()
+    {
+        $this->withoutExceptionHandling();
+        $passwordHash = password_hash('1234', PASSWORD_DEFAULT);
+        $user = User::create([
+            'name' => 'Carlos Souza',
+            'user_type' => 'admin',
+            'email' => 'Carlos@email.com',
+            'phone' => '96 0000000',
+            'password' => $passwordHash
+        ]);
+
+        $token = JWTAuth::fromUser($user);
+
+        Menu_Item::create([
+            "name" => "skol",
+            "description" => "é uma cerveja clara, com aroma refinado e sabor leve e suave",
+            "price" => "5,20",
+            "category" => "cerveja",
+            "stock_quantity" => "2",
+            "is_available" => true
+        ]);
+        $data = [
+            "name" => "skol",
+            "stock_quantity" => "3"
+        ];
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer $token",
+        ])->putJson("api/items/changed", $data);
+        $response->assertStatus(200);
+        $response->assertJson(["msg" => "Successfully changed product"]);
+    }
 }

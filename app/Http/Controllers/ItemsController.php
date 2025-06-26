@@ -83,4 +83,37 @@ class ItemsController extends Controller
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+    public function UpdateItems(Request $request)
+    {
+        try {
+            $name = $request->name;
+            $stock_quantity = $request->stock_quantity;
+            if (
+                strlen(trim($name)) <= 0
+                || strlen(trim($stock_quantity)) <= 0
+            ) {
+                return response()->json(['msg' => 'Need of data'], 401);
+            }
+            $isAvailable = $stock_quantity > 0;
+
+            $rowChanged = Menu_Item::where("name", $name)->update([
+                "stock_quantity" => $stock_quantity,
+                "is_available" => $isAvailable
+            ]);
+
+            if ($rowChanged === 0) {
+                return response()->json(['msg' => 'No matching item found or value already the same'], 404);
+            }
+
+            return response()->json(["msg" => "Successfully changed product"], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro no metodo GetItems:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
 }
