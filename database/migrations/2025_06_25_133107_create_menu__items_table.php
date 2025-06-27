@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string("description");
             $table->string("price");
             $table->string("category");
-            $table->string("stock_quantity");
+            $table->integer("stock_quantity");
             $table->boolean("is_available");
             $table->timestamps();
         });
