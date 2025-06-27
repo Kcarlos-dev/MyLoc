@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ItemsController;
+use App\Http\Controllers\OrderController;
 use App\Http\Middleware\JwtMiddleware;
 use App\Http\Middleware\CheckUserType;
 
@@ -35,4 +36,8 @@ Route::middleware(['jwt.auth', 'user.type:admin,stockist'])->group(function () {
     Route::post('/items/register', [ItemsController::class, 'RegisterItems']);
     Route::put('/items/changed', [ItemsController::class, 'UpdateItems']);
     Route::delete('/items/{name}', [ItemsController::class, "DeleteItems"]);
+});
+
+Route::middleware(['jwt.auth','user.type:user,admin'])->group(function(){
+    Route::post('/orders',[OrderController::class,'RegisterOrder']);
 });

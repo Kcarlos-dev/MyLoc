@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Orders;
+use Illuminate\Support\Facades\Log;
+
+class OrderController extends Controller
+{
+    public function RegisterOrder(Request $request)
+    {
+        try {
+
+            $user_id = $request->user_id;
+            $item_id = $request->item_id;
+            $status = $request->status;
+            $quantity = $request->quantity;
+
+            if (
+                strlen(trim($user_id)) <= 0
+                || strlen(trim($item_id)) <= 0
+                || strlen(trim($status)) <= 0
+                || strlen(trim($quantity)) <= 0
+            ) {
+                return response()->json(['msg' => 'Invalid or nonexistent data'], 401);
+            }
+
+
+            Orders::create([
+                "user_id" => $user_id,
+                "item_id" => $item_id,
+                "status" => $status,
+                "quantity" => $quantity
+            ]);
+
+
+            return response()->json(["msg" => "Successful registered order"], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro no metodo RegisterOrder:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
+}
