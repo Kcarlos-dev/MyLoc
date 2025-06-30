@@ -20,16 +20,16 @@ class OrderController extends Controller
 
             if (
                 strlen(trim($user_id)) <= 0
-                || strlen(trim($item_id)) <= 0
+                || strlen(string: trim($item_id)) <= 0
                 || strlen(trim($status)) <= 0
                 || strlen(trim($quantity)) <= 0
             ) {
                 return response()->json(['msg' => 'Invalid or nonexistent data'], 401);
             }
-            $stock_quantity = Menu_Item::where("item_id",$item_id)->value("stock_quantity");
+            $stock_quantity = Menu_Item::where("item_id", $item_id)->value("stock_quantity");
             //Log::info($stock_quantity[0]->stock_quantity);
 
-            if(intval($quantity) > intval($stock_quantity)){
+            if (intval($quantity) > intval($stock_quantity)) {
                 return response()->json(['msg' => 'Quantity of items exceeds available stock'], 422);
             }
             Orders::create([
@@ -43,6 +43,44 @@ class OrderController extends Controller
             return response()->json(["msg" => "Successful registered order"], 200);
         } catch (\Exception $e) {
             Log::error('Erro no metodo RegisterOrder:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
+    public function UpdateQtdOrder(Request $request, $id)
+    {
+        try {
+            $item_id = $request->item_id;
+            $quantity = $request->quantity;
+
+            if (
+                strlen(string: trim($item_id)) <= 0
+                || strlen(trim($quantity)) <= 0
+            ) {
+                return response()->json(['msg' => 'Invalid or nonexistent quantity'], 401);
+            }
+
+            $stock_quantity = Menu_Item::where("item_id", $item_id)->value("stock_quantity");
+            //Log::info($stock_quantity[0]->stock_quantity);
+
+            if (intval($quantity) > intval($stock_quantity)) {
+                return response()->json(['msg' => 'Quantity of items exceeds available stock'], 422);
+            }
+            $rowChanged = Orders::where("order_id", $id)->update([
+                "quantity" =>  $quantity
+            ]);
+
+            if ($rowChanged === 0) {
+                return response()->json(['msg' => 'No matching item found or value already the same'], 404);
+            }
+
+            return response()->json(["msg" => "Successful update order"], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro no metodo UpdateQtdOrder:', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),

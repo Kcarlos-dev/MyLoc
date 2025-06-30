@@ -40,4 +40,5 @@ Route::middleware(['jwt.auth', 'user.type:admin,stockist'])->group(function () {
 
 Route::middleware(['jwt.auth','user.type:user,admin'])->group(function(){
     Route::post('/orders',[OrderController::class,'RegisterOrder']);
+    Route::put('/orders/{id}',[OrderController::class,'UpdateQtdOrder']);
 });
