@@ -36,7 +36,7 @@ class OrderTest extends TestCase
             "description" => "é uma cerveja clara, com aroma refinado e sabor leve e suave",
             "price" => "5,20",
             "category" => "cerveja",
-            "stock_quantity" => "2",
+            "stock_quantity" => 2,
             "is_available" => true
         ]);
 
@@ -47,7 +47,7 @@ class OrderTest extends TestCase
             "user_id" => $user_id,
             "item_id" => $item_id,
             "status" => "process",
-            "quantity" => 1
+            "quantity" => 3
         ];
 
         $response = $this->withHeaders(headers: [

@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Orders;
+use App\Models\Menu_Item;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
@@ -25,8 +26,12 @@ class OrderController extends Controller
             ) {
                 return response()->json(['msg' => 'Invalid or nonexistent data'], 401);
             }
+            $stock_quantity = Menu_Item::where("item_id",$item_id)->value("stock_quantity");
+            //Log::info($stock_quantity[0]->stock_quantity);
 
-
+            if(intval($quantity) > intval($stock_quantity)){
+                return response()->json(['msg' => 'Quantity of items exceeds available stock'], 422);
+            }
             Orders::create([
                 "user_id" => $user_id,
                 "item_id" => $item_id,
