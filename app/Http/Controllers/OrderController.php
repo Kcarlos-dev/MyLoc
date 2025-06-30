@@ -6,6 +6,7 @@ use App\Models\Orders;
 use App\Models\Menu_Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -116,7 +117,18 @@ class OrderController extends Controller
             ) {
                 return response()->json(['msg' => 'Invalid or nonexistent user_id'], 401);
             }
-            $data = Orders::where("user_id", $user_id)->get();
+            $data = DB::table('orders')
+            ->join('menu__items','orders.item_id',"=","menu__items.item_id")
+            ->select(
+        'orders.user_id',
+                 'orders.item_id',
+                 'menu__items.name',
+                 'orders.status',
+                 "orders.order_price",
+                 'orders.quantity'
+            )
+            ->get();
+
             if (!$data) {
                 return response()->json(['error' => 'Internal Server Error'], 500);
             }

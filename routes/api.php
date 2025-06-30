@@ -32,13 +32,13 @@ Route::middleware([JwtMiddleware::class])->group(function () {
 });
 
 Route::middleware(['jwt.auth', 'user.type:admin,stockist'])->group(function () {
-    Route::get('/items', [ItemsController::class, 'GetItems']);
     Route::post('/items/register', [ItemsController::class, 'RegisterItems']);
     Route::put('/items/changed', [ItemsController::class, 'UpdateItems']);
     Route::delete('/items/{name}', [ItemsController::class, "DeleteItems"]);
 });
 
 Route::middleware(['jwt.auth','user.type:user,admin'])->group(function(){
+    Route::get('/items', [ItemsController::class, 'GetItems']);
     Route::post('/orders',[OrderController::class,'RegisterOrder']);
     Route::put('/orders/{id}',[OrderController::class,'UpdateQtdOrder']);
     Route::get('/orders',[OrderController::class,'GetOrder']);
