@@ -26,16 +26,21 @@ class OrderController extends Controller
             ) {
                 return response()->json(['msg' => 'Invalid or nonexistent data'], 401);
             }
-            $stock_quantity = Menu_Item::where("item_id", $item_id)->value("stock_quantity");
+            $data = Menu_Item::where("item_id", $item_id)->first(['stock_quantity', 'price']);
+            $stock_quantity = $data->stock_quantity;
+            $price =    $data->price;
             //Log::info($stock_quantity[0]->stock_quantity);
 
             if (intval($quantity) > intval($stock_quantity)) {
                 return response()->json(['msg' => 'Quantity of items exceeds available stock'], 422);
             }
+            $order_price =  $quantity * $price;
+            //Log::info($order_price);
             Orders::create([
                 "user_id" => $user_id,
                 "item_id" => $item_id,
                 "status" => $status,
+                "order_price"=>$order_price,
                 "quantity" => $quantity
             ]);
 
@@ -54,6 +59,16 @@ class OrderController extends Controller
     public function UpdateQtdOrder(Request $request, $id)
     {
         try {
+           /* if ($request->type == "status") {
+                $rowChanged = Orders::where("order_id", $id)->update([
+                    "status" =>  $request->status
+                ]);
+
+                if ($rowChanged === 0) {
+                    return response()->json(['msg' => 'No matching item found or value already the same'], 404);
+                }
+                return response()->json(["msg" => "Successful update order"], 200);
+            }*/
             $item_id = $request->item_id;
             $quantity = $request->quantity;
 
@@ -64,14 +79,16 @@ class OrderController extends Controller
                 return response()->json(['msg' => 'Invalid or nonexistent quantity'], 401);
             }
 
-            $stock_quantity = Menu_Item::where("item_id", $item_id)->value("stock_quantity");
-            //Log::info($stock_quantity[0]->stock_quantity);
-
+            $data = Menu_Item::where("item_id", $item_id)->first(['stock_quantity', 'price']);
+            $stock_quantity = $data->stock_quantity;
+            $price =    $data->price;
+            $order_price =  $quantity * $price;
             if (intval($quantity) > intval($stock_quantity)) {
                 return response()->json(['msg' => 'Quantity of items exceeds available stock'], 422);
             }
             $rowChanged = Orders::where("order_id", $id)->update([
-                "quantity" =>  $quantity
+                "quantity" =>  $quantity,
+                "order_price"=> $order_price
             ]);
 
             if ($rowChanged === 0) {

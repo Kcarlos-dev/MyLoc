@@ -12,6 +12,7 @@ class Orders extends Model
     'user_id',
     'item_id',
     'status',
+    "order_price",
     'quantity',
 ];
 

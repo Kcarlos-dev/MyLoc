@@ -35,7 +35,7 @@ class OrderTest extends TestCase
         Menu_Item::create([
             "name" => "skol",
             "description" => "é uma cerveja clara, com aroma refinado e sabor leve e suave",
-            "price" => "5,20",
+            "price" => "5.20",
             "category" => "cerveja",
             "stock_quantity" => 2,
             "is_available" => true
@@ -77,7 +77,7 @@ class OrderTest extends TestCase
         Menu_Item::create([
             "name" => "skol",
             "description" => "é uma cerveja clara, com aroma refinado e sabor leve e suave",
-            "price" => "5,20",
+            "price" => "5.20",
             "category" => "cerveja",
             "stock_quantity" => 2,
             "is_available" => true
@@ -90,6 +90,7 @@ class OrderTest extends TestCase
             "user_id" => $user_id,
             "item_id" => $item_id,
             "status" => "process",
+            "order_price" => 15.60,
             "quantity" => 3
         ]);
         $order_id = Orders::where([
@@ -98,6 +99,8 @@ class OrderTest extends TestCase
         ])->value("order_id");
 
         $data = [
+           /* "type" => "status",
+            "status"=> "pending_payment",*/
             "item_id" => $item_id,
             "order_id" => $order_id,
             "quantity" => 1
@@ -128,7 +131,7 @@ class OrderTest extends TestCase
         Menu_Item::create([
             "name" => "skol",
             "description" => "é uma cerveja clara, com aroma refinado e sabor leve e suave",
-            "price" => "5,20",
+            "price" => "5.20",
             "category" => "cerveja",
             "stock_quantity" => 2,
             "is_available" => true
@@ -141,6 +144,7 @@ class OrderTest extends TestCase
             "user_id" => $user_id,
             "item_id" => $item_id,
             "status" => "process",
+            "order_price" => 15.60,
             "quantity" => 3
         ]);
         $response = $this->withHeaders([

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id("order_id");
 
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('item_id');
+            $table->unsignedBigInteger('item_id')->unique();
 
             $table->foreign("user_id")
                 ->references("id")
@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('status')->default('pending');
 
             $table->integer('quantity');
+            $table->decimal("order_price",10, 2);
 
             $table->timestamps();
         });
