@@ -89,4 +89,29 @@ class OrderController extends Controller
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+    public function GetOrder(Request $request)
+    {
+        try {
+            $user_id = $request->query("user_id");
+
+            if (
+                strlen(string: trim($user_id)) <= 0
+            ) {
+                return response()->json(['msg' => 'Invalid or nonexistent user_id'], 401);
+            }
+            $data = Orders::where("user_id", $user_id)->get();
+            if (!$data) {
+                return response()->json(['error' => 'Internal Server Error'], 500);
+            }
+            return response()->json(["msg" => "Successful get order", "data" => $data], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro no metodo GetOrder:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
 }
