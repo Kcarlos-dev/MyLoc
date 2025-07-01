@@ -127,6 +127,7 @@ class OrderController extends Controller
                     "orders.order_price",
                     'orders.quantity'
                 )
+                ->where('orders.user_id', $user_id)
                 ->get();
 
             if (!$data) {
