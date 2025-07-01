@@ -99,7 +99,7 @@ class OrderTest extends TestCase
         ])->value("order_id");
 
         $data = [
-           /* "type" => "status",
+            /* "type" => "status",
             "status"=> "pending_payment",*/
             "item_id" => $item_id,
             "order_id" => $order_id,
@@ -153,5 +153,52 @@ class OrderTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJson(["msg" => "Successful get order"]);
+    }
+    /** @test */
+    public function he_must_delete_the_orders_in_database()
+    {
+        $this->withoutExceptionHandling();
+
+        $passwordHash = password_hash('1234', PASSWORD_DEFAULT);
+        $user = User::create([
+            'name' => 'Carlos Souza',
+            'user_type' => 'admin',
+            'email' => 'Carlos@email.com',
+            'phone' => '96 0000000',
+            'password' => $passwordHash
+        ]);
+
+        $token = JWTAuth::fromUser($user);
+
+        Menu_Item::create([
+            "name" => "skol",
+            "description" => "é uma cerveja clara, com aroma refinado e sabor leve e suave",
+            "price" => "5.20",
+            "category" => "cerveja",
+            "stock_quantity" => 2,
+            "is_available" => true
+        ]);
+
+        $user_id = User::where("email", "Carlos@email.com")->first()->id;
+        $item_id = Menu_Item::where("name", "skol")->first()->item_id;
+
+        Orders::create([
+            "user_id" => $user_id,
+            "item_id" => $item_id,
+            "status" => "process",
+            "order_price" => 15.60,
+            "quantity" => 3
+        ]);
+
+        $order_id = Orders::where([
+            "user_id" => $user_id,
+            "item_id" => $item_id
+        ])->first()->order_id;
+
+        $response = $this->withHeaders([
+            "Authorization" => "Bearer $token"
+        ])->DeleteJson("api/orders/{$order_id}");
+        $response->assertStatus(200);
+        $response->assertJson(["msg" => "Order deleted from database"]);
     }
 }

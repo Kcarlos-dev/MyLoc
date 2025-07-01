@@ -41,7 +41,7 @@ class OrderController extends Controller
                 "user_id" => $user_id,
                 "item_id" => $item_id,
                 "status" => $status,
-                "order_price"=>$order_price,
+                "order_price" => $order_price,
                 "quantity" => $quantity
             ]);
 
@@ -60,7 +60,7 @@ class OrderController extends Controller
     public function UpdateQtdOrder(Request $request, $id)
     {
         try {
-           /* if ($request->type == "status") {
+            /* if ($request->type == "status") {
                 $rowChanged = Orders::where("order_id", $id)->update([
                     "status" =>  $request->status
                 ]);
@@ -89,7 +89,7 @@ class OrderController extends Controller
             }
             $rowChanged = Orders::where("order_id", $id)->update([
                 "quantity" =>  $quantity,
-                "order_price"=> $order_price
+                "order_price" => $order_price
             ]);
 
             if ($rowChanged === 0) {
@@ -118,16 +118,16 @@ class OrderController extends Controller
                 return response()->json(['msg' => 'Invalid or nonexistent user_id'], 401);
             }
             $data = DB::table('orders')
-            ->join('menu__items','orders.item_id',"=","menu__items.item_id")
-            ->select(
-        'orders.user_id',
-                 'orders.item_id',
-                 'menu__items.name',
-                 'orders.status',
-                 "orders.order_price",
-                 'orders.quantity'
-            )
-            ->get();
+                ->join('menu__items', 'orders.item_id', "=", "menu__items.item_id")
+                ->select(
+                    'orders.user_id',
+                    'orders.item_id',
+                    'menu__items.name',
+                    'orders.status',
+                    "orders.order_price",
+                    'orders.quantity'
+                )
+                ->get();
 
             if (!$data) {
                 return response()->json(['error' => 'Internal Server Error'], 500);
@@ -135,6 +135,31 @@ class OrderController extends Controller
             return response()->json(["msg" => "Successful get order", "data" => $data], 200);
         } catch (\Exception $e) {
             Log::error('Erro no metodo GetOrder:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
+    public function DeleteOrder($order_id)
+    {
+        try {
+
+            if (
+                strlen(string: trim($order_id)) <= 0
+            ) {
+                return response()->json(['msg' => 'Invalid or nonexistent order_id'], 401);
+            }
+            $order = Orders::where("order_id", $order_id)->delete();
+
+            if (!$order) {
+                return response()->json(['msg' => 'Order not found'], 404);
+            }
+            return response()->json(["msg" => "Order deleted from database"], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro no metodo DeleteOrder:', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),

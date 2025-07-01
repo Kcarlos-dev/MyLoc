@@ -42,4 +42,5 @@ Route::middleware(['jwt.auth','user.type:user,admin'])->group(function(){
     Route::post('/orders',[OrderController::class,'RegisterOrder']);
     Route::put('/orders/{id}',[OrderController::class,'UpdateQtdOrder']);
     Route::get('/orders',[OrderController::class,'GetOrder']);
+    Route::delete('/orders/{id}',[OrderController::class, 'DeleteOrder']);
 });
