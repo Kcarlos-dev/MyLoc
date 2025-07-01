@@ -120,6 +120,7 @@ class OrderController extends Controller
             $data = DB::table('orders')
                 ->join('menu__items', 'orders.item_id', "=", "menu__items.item_id")
                 ->select(
+                    'orders.order_id',
                     'orders.user_id',
                     'orders.item_id',
                     'menu__items.name',
@@ -161,6 +162,48 @@ class OrderController extends Controller
             return response()->json(["msg" => "Order deleted from database"], 200);
         } catch (\Exception $e) {
             Log::error('Erro no metodo DeleteOrder:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
+    public function PaymentOrder(Request $request)
+    {
+        try {
+            $order_id = $request->order_id;
+            if (
+                strlen(string: trim($order_id)) <= 0
+            ) {
+                return response()->json(['msg' => 'Invalid or nonexistent order_id'], 401);
+            }
+
+            $data = DB::table("orders")
+                ->join("users", "orders.user_id", "=", "users.id")
+                ->join("menu__items", "orders.item_id", "=", "menu__items.item_id")
+                ->select(
+                    "orders.order_id",
+                    "users.id AS user_id",
+                    "users.name AS name_customer",
+                    "menu__items.name AS name_item",
+                    "users.phone",
+                    "orders.order_price AS price",
+                    "orders.quantity",
+                )->where('orders.order_id', $order_id)
+                ->get();
+            /*$msg = "👋 Olá! Seu pedido:\n📦 Produto: " . $data[0]->name_item .
+                "\n💲 Valor: R$" . $data[0]->price .
+                "\n🔢 Quantidade: " . $data[0]->quantity .
+                "\n\nPor favor, confirme o pagamento.\nEnvie o PIX para o nosso número e mande o comprovante aqui na conversa. 😊";
+
+            $link = 'https://wa.me/' . $data[0]->phone . '?text=' . urlencode($msg);*/
+
+            //Log::info($data[0]->phone);
+            return response()->json(["msg" => "Payment sent to the customer", "data" => ""], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro no metodo PaymentOrder:', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
