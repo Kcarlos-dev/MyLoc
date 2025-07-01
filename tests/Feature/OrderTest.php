@@ -236,12 +236,9 @@ class OrderTest extends TestCase
             "order_price" => 15.60,
             "quantity" => 3
         ]);
-        $order_id = Orders::where([
-            "user_id" => $user_id,
-            "item_id" => $item_id,
-        ])->value("order_id");
+
         $data = [
-            "order_id" => $order_id,
+            "user_id" => $user_id,
         ];
         $response = $this->withHeaders([
             "Authorization" => "Bearer $token"

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id("order_id");
 
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('item_id')->unique();
+            $table->unsignedBigInteger('item_id');
 
             $table->foreign("user_id")
                 ->references("id")

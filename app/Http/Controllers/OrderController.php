@@ -173,35 +173,28 @@ class OrderController extends Controller
     public function PaymentOrder(Request $request)
     {
         try {
-            $order_id = $request->order_id;
-            if (
-                strlen(string: trim($order_id)) <= 0
-            ) {
-                return response()->json(['msg' => 'Invalid or nonexistent order_id'], 401);
-            }
-
-            $data = DB::table("orders")
-                ->join("users", "orders.user_id", "=", "users.id")
-                ->join("menu__items", "orders.item_id", "=", "menu__items.item_id")
-                ->select(
-                    "orders.order_id",
-                    "users.id AS user_id",
-                    "users.name AS name_customer",
-                    "menu__items.name AS name_item",
-                    "users.phone",
-                    "orders.order_price AS price",
-                    "orders.quantity",
-                )->where('orders.order_id', $order_id)
+            $user_id = $request->user_id;
+            $data = DB::table('orders')
+                ->join('users', 'users.id', '=', 'orders.user_id')
+                ->join('menu__items', 'menu__items.item_id', '=', 'orders.item_id')
+                ->select([
+                    'orders.order_id',
+                    DB::raw('CONCAT(orders.item_id, "-", menu__items.name) AS produto'),
+                    DB::raw('CONCAT(orders.user_id, "-", users.name) AS cliente'),
+                    'orders.status',
+                    DB::raw("
+            (SELECT SUM(CAST(order_price AS DECIMAL(10,2)))
+             FROM orders AS o2
+             WHERE o2.user_id = {$user_id} AND o2.status = 'process'
+            ) AS price
+        ")
+                ])
+                ->where('orders.user_id', $user_id)
+                ->where('orders.status', 'process')
+                ->groupBy('orders.order_id')
                 ->get();
-            /*$msg = "👋 Olá! Seu pedido:\n📦 Produto: " . $data[0]->name_item .
-                "\n💲 Valor: R$" . $data[0]->price .
-                "\n🔢 Quantidade: " . $data[0]->quantity .
-                "\n\nPor favor, confirme o pagamento.\nEnvie o PIX para o nosso número e mande o comprovante aqui na conversa. 😊";
-
-            $link = 'https://wa.me/' . $data[0]->phone . '?text=' . urlencode($msg);*/
-
-            //Log::info($data[0]->phone);
-            return response()->json(["msg" => "Payment sent to the customer", "data" => ""], 200);
+            Log::info($data);
+            return response()->json(["msg" => "Payment sent to the customer", "data" => $data], 200);
         } catch (\Exception $e) {
             Log::error('Erro no metodo PaymentOrder:', [
                 'message' => $e->getMessage(),
