@@ -27,7 +27,7 @@ return new class extends Migration
                 ->on("menu__items")
                 ->onDelete('cascade');
 
-            $table->string('status')->default('pending');
+            $table->string('status')->default('process');
 
             $table->integer('quantity');
             $table->decimal("order_price",10, 2);

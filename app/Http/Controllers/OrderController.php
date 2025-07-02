@@ -37,6 +37,15 @@ class OrderController extends Controller
             }
             $order_price =  $quantity * $price;
             //Log::info($order_price);
+            $itemValidete =   Orders::where([
+                'user_id' => $user_id,
+                'item_id' => $item_id,
+                'status'  => "process"
+            ])->first();
+
+            if($itemValidete){
+                return response()->json(["msg" => "You cannot register two identical items"],404);
+            }
             Orders::create([
                 "user_id" => $user_id,
                 "item_id" => $item_id,
